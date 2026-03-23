@@ -555,7 +555,7 @@ Credentials mặc định:
    Time: 2:00 AM
    Timezone: Asia/Bangkok
    ```
-
+![alt text](image-10.png)
 6. **Click "Deploy"** để start ingestion
 
 ### 🔍 **Quy trình crawl metadata chi tiết:**
