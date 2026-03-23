@@ -121,7 +121,8 @@ OpenMetadata
 ✅ **Scalable** - Hỗ trợ từ small teams đến enterprise
 
 ---
-
+![alt text](image-12.png)
+![alt text](image-11.png)
 ---
 
 # 🐳 PHẦN 2: HƯỚNG DẪN CHẠY OPENMETADATA VỚI DOCKER
