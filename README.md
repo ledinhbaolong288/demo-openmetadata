@@ -682,7 +682,6 @@ Sau khi ingestion hoàn tất:
    - Tags, descriptions
    ```
 
----
 ![alt text](image-6.png)
 Schema trên UI Openmetadata
 ![alt text](image-7.png)
@@ -1727,5 +1726,6 @@ curl -X PUT http://localhost:9200/_snapshot/my_backup/snapshot_1
 
 ---
 
-**Last Updated:** March 2024
-**OpenMetadata Version:** 1.12.0
+Last Updated: 2026-03-23
+Status: Active
+Maintainer: Data Team
