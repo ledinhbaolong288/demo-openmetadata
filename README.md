@@ -169,8 +169,8 @@ postgresql:
   container_name: openmetadata_postgresql
   restart: always
   environment:
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: postgres
+    POSTGRES_USER:
+    POSTGRES_PASSWORD:
     POSTGRES_DB: openmetadata_db
   ports:
     - "5432:5432"
@@ -239,8 +239,8 @@ execute-migrate-all:
     DB_SCHEME: postgresql
     DB_HOST: postgresql
     DB_PORT: 5432
-    DB_USER: postgres
-    DB_USER_PASSWORD: postgres
+    DB_USER:
+    DB_USER_PASSWORD:
     OM_DATABASE: openmetadata_db
     ELASTICSEARCH_HOST: elasticsearch
     ELASTICSEARCH_PORT: 9200
@@ -282,8 +282,8 @@ openmetadata-server:
     DB_SCHEME: postgresql
     DB_HOST: postgresql
     DB_PORT: 5432
-    DB_USER: postgres
-    DB_USER_PASSWORD: postgres
+    DB_USER:
+    DB_USER_PASSWORD:
     OM_DATABASE: openmetadata_db
     
     # Elasticsearch
@@ -293,8 +293,8 @@ openmetadata-server:
     # Airflow Integration
     PIPELINE_SERVICE_CLIENT_ENDPOINT: http://ingestion:8080
     PIPELINE_SERVICE_CLIENT_ENABLED: true
-    AIRFLOW_USERNAME: admin
-    AIRFLOW_PASSWORD: admin
+    AIRFLOW_USERNAME:
+    AIRFLOW_PASSWORD:
     
     # Authentication (Basic auth mặc định)
     AUTHENTICATION_PROVIDER: basic
@@ -323,8 +323,7 @@ openmetadata-server:
 **Access Point:**
 - UI: http://localhost:8585
 - API: http://localhost:8585/api/v1
-- Credentials: `admin` / `admin` (mặc định)
-
+![alt text](image.png)
 ---
 
 ### 🔄 **Service 5: ingestion (Airflow Ingestion)**
@@ -353,8 +352,8 @@ ingestion:
     AIRFLOW_DB: openmetadata_db
     
     # Airflow Credentials
-    AIRFLOW_USERNAME: admin
-    AIRFLOW_PASSWORD: admin
+    AIRFLOW_USERNAME:
+    AIRFLOW_PASSWORD:
     _AIRFLOW_WWW_USER_CREATE_ADMIN: true
   
   volumes:
@@ -375,8 +374,7 @@ ingestion:
 
 **Access Point:**
 - Airflow UI: http://localhost:8080
-- Credentials: `admin` / `admin`
-
+![alt text](image-1.png)
 ---
 
 ## 2.3 Hướng dẫn chạy Docker Compose
@@ -455,8 +453,8 @@ docker system prune -a
 Truy cập: **http://localhost:8585**
 
 Credentials mặc định:
-- Username: `admin`
-- Password: `admin`
+- Username:
+- Password:
 
 ---
 
@@ -466,7 +464,7 @@ Credentials mặc định:
 - Hiển thị tổng số databases, tables, users
 - Shortcuts để truy cập nhanh
 - Recent activities
-
+![alt text](image-2.png)
 ### 🔍 **Explore (Data Discovery)**
 - Tìm kiếm metadata
 - Filter theo entity type: Databases, Tables, Schemas, Columns
@@ -502,9 +500,9 @@ Credentials mặc định:
 1. **Vào Admin → Data Sources**
 
 2. **Click "Add new Data Source"**
-
+![alt text](image-4.png)
 3. **Chọn database type** (PostgreSQL, Redshift, Oracle, Trino, etc.)
-
+![alt text](image-3.png)
 4. **Điền thông tin kết nối:**
    ```
    Service Name: my-postgres-db
@@ -520,6 +518,16 @@ Credentials mặc định:
 
 6. **Click "Save"** để lưu
 
+### ⚠️ **Quan trọng: Thêm Data Source KHÔNG tự động crawl metadata!**
+
+**Khi bạn thêm Data Source:**
+- ✅ **Tạo connection configuration** (host, port, credentials)
+- ✅ **Lưu trữ thông tin kết nối** trong OpenMetadata database
+- ✅ **Cho phép test connection** để verify
+- ❌ **KHÔNG tự động crawl metadata** từ database
+
+**Để crawl metadata, bạn PHẢI thực hiện Bước 2: Tạo Ingestion Pipeline**
+
 ---
 
 ### 🔄 **Bước 2: Chạy Ingestion (Thu thập Metadata)**
@@ -532,7 +540,7 @@ Credentials mặc định:
 
 4. **Cấu hình Ingestion:**
    ```
-   Name: my-ingestion-daily
+   Name: Metadata Agent
    Ingestion Type: Metadata (hoặc Usage/Lineage/Profiling)
    
    Metadata Options:
@@ -540,7 +548,7 @@ Credentials mặc định:
    - Table Filter: Pattern để select tables
    - Include View Definitions: Yes/No
    ```
-
+![alt text](image-5.png)
 5. **Cấu hình Schedule (nếu cần):**
    ```
    Execution Frequency: Daily, Weekly, Monthly, Once
@@ -549,6 +557,154 @@ Credentials mặc định:
    ```
 
 6. **Click "Deploy"** để start ingestion
+
+### 🔍 **Quy trình crawl metadata chi tiết:**
+
+Khi bạn **Deploy** ingestion pipeline:
+
+```
+1. OpenMetadata tạo Ingestion Configuration
+   └─ JSON config với thông tin Data Source + Ingestion options
+
+2. Configuration được gửi tới Airflow
+   └─ Airflow tạo DAG (Directed Acyclic Graph) từ config
+
+3. DAG được trigger (manual hoặc scheduled)
+   ├─ Task 1: Connect tới database sử dụng credentials từ Data Source
+   ├─ Task 2: Query system tables (information_schema, pg_catalog, etc.)
+   ├─ Task 3: Fetch metadata: tables, columns, types, constraints, indexes
+   ├─ Task 4: Process & validate metadata
+   ├─ Task 5: Send metadata tới OpenMetadata API (/api/v1/tables)
+   └─ Task 6: Elasticsearch indexing cho search
+
+4. Metadata hiển thị trong UI
+   └─ Tables, columns, schemas appear trong Explore page
+   └─ Searchable qua Elasticsearch
+```
+
+### ⏱️ **Thời gian crawl metadata:**
+
+- **Small database** (< 100 tables): 1-5 phút
+- **Medium database** (100-1000 tables): 5-15 phút  
+- **Large database** (> 1000 tables): 15-60 phút
+- **Very large** (> 10k tables): 1-4 giờ
+
+**Factors ảnh hưởng:**
+- Network latency tới database
+- Database performance
+- Number of tables/columns
+- Include profiling data (Yes/No)
+- Airflow worker resources
+
+---
+
+### 🔄 **Bước 3: Monitor Ingestion Progress**
+
+Sau khi Deploy ingestion, bạn có thể monitor progress qua 2 cách:
+
+#### 📊 **Cách 1: Monitor từ OpenMetadata UI**
+
+1. **Vào Admin → Ingestion**
+2. **Click vào ingestion vừa tạo**
+3. **Xem Pipeline Status:**
+   ```
+   Status: Running / Success / Failed
+   Last Run: Thời gian chạy cuối
+   Next Run: Thời gian chạy tiếp theo (nếu scheduled)
+   Duration: Thời gian thực hiện
+   ```
+4. **Xem Logs:**
+   - Click "View Logs" để xem detailed logs
+   - Logs show từng bước: connecting, fetching tables, sending to API
+
+#### 📊 **Cách 2: Monitor từ Airflow UI**
+
+1. **Truy cập Airflow**: http://localhost:8080
+2. **Tìm DAG tương ứng:**
+   ```
+   DAG ID: openmetadata_ingestion_dag_<data_source_name>
+   Ví dụ: openmetadata_ingestion_dag_my_postgres
+   ```
+3. **Xem DAG Runs:**
+   - Click vào DAG
+   - Xem Graph View: flow của tasks
+   - Click vào task để xem logs
+4. **Monitor Tasks:**
+   ```
+   Task 1: metadata-extraction → Fetch metadata từ database
+   Task 2: metadata-validation → Validate data
+   Task 3: metadata-sink → Send tới OpenMetadata API
+   Task 4: elasticsearch-index → Index cho search
+   ```
+
+#### 📈 **Cách 3: Monitor qua API**
+
+```bash
+# Check ingestion status
+curl -X GET "http://localhost:8585/api/v1/services/ingestionPipelines/{ingestion_id}"
+
+# Response
+{
+  "id": "12345",
+  "name": "my-postgres-ingestion",
+  "status": "SUCCESS",
+  "startDate": "2024-03-23T10:00:00Z",
+  "endDate": "2024-03-23T10:05:00Z",
+  "executionSummary": {
+    "totalRecords": 150,
+    "successRecords": 150,
+    "failedRecords": 0
+  }
+}
+```
+
+---
+
+### 🔍 **Bước 4: Verify Metadata đã được crawl**
+
+Sau khi ingestion hoàn tất:
+
+1. **Vào Explore page**
+2. **Search database name**: "my-postgres-db"
+3. **Xem kết quả:**
+   ```
+   - Database: my-postgres-db
+   - Schemas: public, analytics, etc.
+   - Tables: users, orders, products, etc.
+   - Columns: id, name, email, created_at, etc.
+   ```
+
+4. **Click vào table để xem chi tiết:**
+   ```
+   - Column names & types
+   - Row count (nếu enable profiling)
+   - Sample data
+   - Tags, descriptions
+   ```
+
+---
+
+### 🔄 **Tự động crawl metadata định kỳ**
+
+Để metadata luôn up-to-date:
+
+1. **Trong Ingestion Configuration, set Schedule:**
+   ```
+   Enable Scheduling: Yes
+   Frequency: Daily
+   Time: 02:00 AM
+   ```
+
+2. **Deploy ingestion**
+
+3. **Airflow sẽ tự động trigger mỗi ngày lúc 2:00 AM**
+
+**Lợi ích của scheduled ingestion:**
+- ✅ Metadata luôn mới
+- ✅ Consistent & reliable  
+- ✅ No manual intervention
+- ✅ Monitor qua Airflow UI
+- ✅ Logs & alerts nếu fail
 
 ---
 
