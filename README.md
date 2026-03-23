@@ -683,7 +683,10 @@ Sau khi ingestion hoàn tất:
    ```
 
 ---
-
+![alt text](image-6.png)
+Schema trên UI Openmetadata
+![alt text](image-7.png)
+Schema thực tế trên Database
 ### 🔄 **Tự động crawl metadata định kỳ**
 
 Để metadata luôn up-to-date:
@@ -694,6 +697,8 @@ Sau khi ingestion hoàn tất:
    Frequency: Daily
    Time: 02:00 AM
    ```
+![alt text](image-8.png)
+Kiểm tra trạng thái
 
 2. **Deploy ingestion**
 
@@ -736,7 +741,8 @@ Sau khi ingestion hoàn tất:
 2. **Gắn Tags:**
    - Click "Add Tag"
    - Chọn hoặc tạo tag mới: "PII", "Critical", "Customer", etc.
-
+![alt text](image-9.png)
+Gán tag dữ liệu nhạy cảm
 3. **Thêm Description:**
    - Click vào description field
    - Thêm text mô tả table/column

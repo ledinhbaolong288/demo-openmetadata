@@ -21,3 +21,5 @@ profiles.yml
 
 # Docker
 *.log
+
+note

@@ -1,0 +1,10 @@
+tk_openmetadata: 
+    username: admin@open-metadata.org
+    password: admin
+tk_posgreSQL:
+    username: postgres
+    password: postgres
+
+tk_airflow:
+    username: admin
+    password: admin
