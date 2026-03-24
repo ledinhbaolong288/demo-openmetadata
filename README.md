@@ -121,14 +121,14 @@ OpenMetadata
 ✅ **Scalable** - Hỗ trợ từ small teams đến enterprise
 
 ---
-![alt text](image-12.png)
-![alt text](image-11.png)
+![alt text](images/image-12.png)
+![alt text](images/image-11.png)
 ---
 
 # 🐳 PHẦN 2: HƯỚNG DẪN CHẠY OPENMETADATA VỚI DOCKER
 
 ## 2.1 Chuẩn bị môi trường
-
+ 
 ### ⚙️ Yêu cầu hệ thống:
 - **Docker & Docker Compose** (phiên bản mới nhất)
 - **RAM**: ít nhất 8GB (khuyến nghị 16GB)
@@ -323,8 +323,7 @@ openmetadata-server:
 
 **Access Point:**
 - UI: http://localhost:8585
-- API: http://localhost:8585/api/v1
-![alt text](image.png)
+![alt text](images/image.png)
 ---
 
 ### 🔄 **Service 5: ingestion (Airflow Ingestion)**
@@ -375,7 +374,7 @@ ingestion:
 
 **Access Point:**
 - Airflow UI: http://localhost:8080
-![alt text](image-1.png)
+![alt text](images/image-1.png)
 ---
 
 ## 2.3 Hướng dẫn chạy Docker Compose
@@ -465,7 +464,7 @@ Credentials mặc định:
 - Hiển thị tổng số databases, tables, users
 - Shortcuts để truy cập nhanh
 - Recent activities
-![alt text](image-2.png)
+![alt text](images/image-2.png)
 ### 🔍 **Explore (Data Discovery)**
 - Tìm kiếm metadata
 - Filter theo entity type: Databases, Tables, Schemas, Columns
@@ -501,9 +500,9 @@ Credentials mặc định:
 1. **Vào Admin → Data Sources**
 
 2. **Click "Add new Data Source"**
-![alt text](image-4.png)
+![alt text](images/image-4.png)
 3. **Chọn database type** (PostgreSQL, Redshift, Oracle, Trino, etc.)
-![alt text](image-3.png)
+![alt text](images/image-3.png)
 4. **Điền thông tin kết nối:**
    ```
    Service Name: my-postgres-db
@@ -549,14 +548,14 @@ Credentials mặc định:
    - Table Filter: Pattern để select tables
    - Include View Definitions: Yes/No
    ```
-![alt text](image-5.png)
+![alt text](images/image-5.png)
 5. **Cấu hình Schedule (nếu cần):**
    ```
    Execution Frequency: Daily, Weekly, Monthly, Once
    Time: 2:00 AM
    Timezone: Asia/Bangkok
    ```
-![alt text](image-10.png)
+![alt text](images/image-10.png)
 6. **Click "Deploy"** để start ingestion
 
 ### 🔍 **Quy trình crawl metadata chi tiết:**
@@ -683,9 +682,9 @@ Sau khi ingestion hoàn tất:
    - Tags, descriptions
    ```
 
-![alt text](image-6.png)
+![alt text](images/image-6.png)
 Schema trên UI Openmetadata
-![alt text](image-7.png)
+![alt text](images/image-7.png)
 Schema thực tế trên Database
 ### 🔄 **Tự động crawl metadata định kỳ**
 
@@ -697,7 +696,7 @@ Schema thực tế trên Database
    Frequency: Daily
    Time: 02:00 AM
    ```
-![alt text](image-8.png)
+![alt text](images/image-8.png)
 Kiểm tra trạng thái
 
 2. **Deploy ingestion**
@@ -741,7 +740,7 @@ Kiểm tra trạng thái
 2. **Gắn Tags:**
    - Click "Add Tag"
    - Chọn hoặc tạo tag mới: "PII", "Critical", "Customer", etc.
-![alt text](image-9.png)
+![alt text](images/image-9.png)
 Gán tag dữ liệu nhạy cảm
 3. **Thêm Description:**
    - Click vào description field
