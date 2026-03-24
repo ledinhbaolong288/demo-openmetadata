@@ -112,12 +112,19 @@ OpenMetadata
 ## 1.4 Lợi ích của OpenMetadata
 
 ✅ **Centralized Metadata Management** - Tất cả metadata ở 1 nơi
+
 ✅ **Quick Data Discovery** - Tìm kiếm dữ liệu nhanh chóng
+
 ✅ **Data Lineage Tracking** - Theo dõi luồng dữ liệu từ source đến destination
+
 ✅ **Team Collaboration** - Chia sẻ kiến thức qua tags, descriptions
+
 ✅ **Automated Workflows** - Ingestion tự động qua Airflow
+
 ✅ **Open Source** - Free, customizable, large community
+
 ✅ **Multi-Source Support** - Kết nối 50+ loại data sources
+
 ✅ **Scalable** - Hỗ trợ từ small teams đến enterprise
 
 ---
